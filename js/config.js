@@ -11,8 +11,8 @@ const CONFIG = {
     GITHUB_REPO: {
         USERNAME: 'nishamehndidesigner',
         REPO_NAME: 'gallery',
-        BRANCH: 'master',
-        BASE_URL: 'https://raw.githubusercontent.com/nishamehndidesigner/gallery/master/',
+        BRANCH: 'main',
+        BASE_URL: 'https://raw.githubusercontent.com/nishamehndidesigner/gallery/main/',
         API_BASE_URL: 'https://api.github.com/repos/nishamehndidesigner/gallery/contents'
     },
     

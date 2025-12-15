@@ -18,6 +18,7 @@ async function loadPricingData() {
         await loadGoogleSheetsCSV();
     } catch (error) {
         console.error('Failed to load pricing from Google Sheets:', error);
+        console.log('Make sure Google Sheet is public: Share > Anyone with link > Viewer');
     }
 }
 
@@ -50,12 +51,18 @@ function parseCSV(csvText) {
     const data = [];
     
     for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
-        if (values[0] && values[1] && values[2]) {
+        const line = lines[i].trim();
+        if (!line) continue;
+        
+        // Handle CSV with proper comma splitting (accounting for quoted values)
+        const values = line.match(/(?:"[^"]*"|[^,])+/g) || [];
+        const cleanValues = values.map(v => v.trim().replace(/^"|"$/g, ''));
+        
+        if (cleanValues[0] && cleanValues[1] && cleanValues[2]) {
             data.push({
-                service: values[0],
-                minPrice: values[1],
-                maxPrice: values[2]
+                service: cleanValues[0],
+                minPrice: parseInt(cleanValues[1]) || cleanValues[1],
+                maxPrice: parseInt(cleanValues[2]) || cleanValues[2]
             });
         }
     }
