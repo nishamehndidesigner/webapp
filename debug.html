@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Console</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1e1e1e; color: #fff; }
+        .log { margin: 5px 0; padding: 8px; border-radius: 4px; }
+        .error { background: #ff4444; }
+        .success { background: #44ff44; color: #000; }
+        .info { background: #4444ff; }
+        .warn { background: #ffaa00; color: #000; }
+        #console { height: 400px; overflow-y: auto; border: 1px solid #555; padding: 10px; }
+        button { padding: 10px 20px; margin: 5px; background: #007acc; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🐛 Netlify Debug Console</h1>
+    
+    <div>
+        <button onclick="testPricing()">Test Pricing</button>
+        <button onclick="testGallery()">Test Gallery</button>
+        <button onclick="clearConsole()">Clear</button>
+    </div>
+    
+    <div id="console"></div>
+
+    <script src="js/config.js"></script>
+    <script>
+        const consoleDiv = document.getElementById('console');
+        
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `log ${type}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            consoleDiv.appendChild(div);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+            console.log(message);
+        }
+        
+        function clearConsole() {
+            consoleDiv.innerHTML = '';
+        }
+        
+        async function testPricing() {
+            log('🔍 Testing Google Sheets CSV...', 'info');
+            
+            try {
+                const url = CONFIG.GOOGLE_SHEETS.CSV_URL;
+                log(`📡 Fetching: ${url}`, 'info');
+                
+                const response = await fetch(url);
+                log(`📊 Response: ${response.status} ${response.statusText}`, response.ok ? 'success' : 'error');
+                
+                if (response.ok) {
+                    const text = await response.text();
+                    log(`📄 CSV Length: ${text.length} characters`, 'success');
+                    log(`📄 First 200 chars: ${text.substring(0, 200)}`, 'info');
+                    
+                    const lines = text.trim().split('\\n');
+                    log(`📊 Total lines: ${lines.length}`, 'success');
+                    
+                    if (lines.length > 1) {
+                        log(`✅ CSV parsing successful!`, 'success');
+                    } else {
+                        log(`❌ CSV has no data rows`, 'error');
+                    }
+                } else {
+                    log(`❌ Failed to fetch CSV`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testGallery() {
+            log('🔍 Testing GitHub API...', 'info');
+            
+            try {
+                const url = CONFIG.GITHUB_REPO.API_BASE_URL;
+                log(`📡 Fetching: ${url}`, 'info');
+                
+                const response = await fetch(url);
+                log(`🐙 Response: ${response.status} ${response.statusText}`, response.ok ? 'success' : 'error');
+                
+                if (response.ok) {
+                    const files = await response.json();
+                    log(`📁 Total files: ${files.length}`, 'success');
+                    
+                    const imageFiles = files.filter(f => /\\.(jpg|jpeg|png|gif|webp)$/i.test(f.name));
+                    log(`🖼️ Image files: ${imageFiles.length}`, 'success');
+                    
+                    imageFiles.forEach(file => {
+                        const category = getCategoryFromFileName(file.name);
+                        log(`📸 ${file.name} -> ${category || 'uncategorized'}`, category ? 'success' : 'warn');
+                    });
+                    
+                    if (imageFiles.length > 0) {
+                        log(`✅ GitHub API successful!`, 'success');
+                        
+                        // Test first image loading
+                        const testImage = imageFiles[0];
+                        const imageUrl = CONFIG.GITHUB_REPO.RAW_BASE_URL + testImage.name;
+                        log(`🔍 Testing image load: ${imageUrl}`, 'info');
+                        
+                        const img = new Image();
+                        img.onload = () => log(`✅ Image loaded: ${testImage.name}`, 'success');
+                        img.onerror = () => log(`❌ Image failed: ${testImage.name}`, 'error');
+                        img.src = imageUrl;
+                    } else {
+                        log(`❌ No image files found`, 'error');
+                    }
+                } else {
+                    log(`❌ Failed to fetch GitHub API`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        function getCategoryFromFileName(fileName) {
+            const name = fileName.toLowerCase();
+            if (name.includes('bridal')) return 'bridal';
+            if (name.includes('party')) return 'party';
+            if (name.includes('arabic')) return 'arabic';
+            if (name.includes('simple')) return 'simple';
+            return null;
+        }
+        
+        // Auto-run tests
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Debug console loaded', 'success');
+            log('Click buttons to test individual components', 'info');
+        });
+    </script>
+</body>
+</html>

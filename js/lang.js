@@ -14,14 +14,26 @@ function updateLanguage() {
 
 // PRICING SYSTEM - CSV ONLY
 async function loadPricingData() {
+    console.log('📊 Fetching pricing from:', CONFIG.GOOGLE_SHEETS.CSV_URL);
     try {
         const response = await fetch(CONFIG.GOOGLE_SHEETS.CSV_URL);
-        const csvText = await response.text(); // ✅ CORRECT - CSV is TEXT not JSON
+        console.log('📊 Response status:', response.status, response.statusText);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const csvText = await response.text();
+        console.log('📊 CSV length:', csvText.length, 'First 100 chars:', csvText.substring(0, 100));
+        
         const data = parseCSV(csvText);
+        console.log('📊 Parsed data:', data);
+        
         updatePricingDisplay(data);
         console.log('✅ Pricing loaded from Google Sheets');
     } catch (error) {
-        console.error('Failed to load pricing:', error);
+        console.error('❌ Failed to load pricing:', error);
+        console.error('Make sure Google Sheet is PUBLIC: Share > Anyone with link > Viewer');
     }
 }
 
@@ -63,33 +75,47 @@ function updatePricingDisplay(data) {
 // GALLERY SYSTEM - RAW URLS ONLY
 async function loadGalleryImages() {
     const galleryGrid = document.querySelector('.gallery-grid');
-    if (!galleryGrid) return;
+    if (!galleryGrid) {
+        console.log('❌ Gallery grid not found');
+        return;
+    }
     
     galleryGrid.innerHTML = '<div style="text-align: center; padding: 2rem; color: #8B4513;">Loading images...</div>';
     
+    console.log('🖼️ Fetching images from:', CONFIG.GITHUB_REPO.API_BASE_URL);
+    
     try {
         const response = await fetch(CONFIG.GITHUB_REPO.API_BASE_URL);
-        const files = await response.json(); // ✅ GitHub API returns JSON
+        console.log('🖼️ Response status:', response.status, response.statusText);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const files = await response.json();
+        console.log('🖼️ Found files:', files.length);
         
         const images = { bridal: [], party: [], arabic: [], simple: [] };
         
         files.forEach(file => {
             if (file.type === 'file' && isImageFile(file.name)) {
                 const category = getCategoryFromFileName(file.name);
+                console.log('🖼️ Image:', file.name, 'Category:', category);
                 if (category && images[category]) {
                     images[category].push({
                         name: file.name,
-                        url: CONFIG.GITHUB_REPO.RAW_BASE_URL + file.name, // ✅ RAW URL
+                        url: CONFIG.GITHUB_REPO.RAW_BASE_URL + file.name,
                         title: formatTitle(file.name)
                     });
                 }
             }
         });
         
+        console.log('🖼️ Categorized images:', images);
         displayImages(images);
         console.log('✅ Images loaded from GitHub');
     } catch (error) {
-        console.error('GitHub failed:', error);
+        console.error('❌ GitHub failed:', error);
         showGitHubError();
     }
 }
@@ -185,11 +211,20 @@ function showNoImagesMessage() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
-    if (window.location.pathname.includes('pricing.html')) {
+    console.log('🚀 Page loaded:', window.location.pathname);
+    
+    // More flexible path detection for Netlify
+    const path = window.location.pathname.toLowerCase();
+    const isPricing = path.includes('pricing') || document.querySelector('[data-service]');
+    const isGallery = path.includes('gallery') || document.querySelector('.gallery-grid');
+    
+    if (isPricing) {
+        console.log('📊 Loading pricing data...');
         loadPricingData();
     }
     
-    if (window.location.pathname.includes('gallery.html')) {
+    if (isGallery) {
+        console.log('🖼️ Loading gallery images...');
         loadGalleryImages();
     }
     
