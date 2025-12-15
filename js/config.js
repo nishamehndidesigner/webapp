@@ -1,18 +1,17 @@
 // Website Configuration - NETLIFY OPTIMIZED
 
 const CONFIG = {
-    // Google Sheets - Use CSV export (works reliably)
+    // Google Sheets - Direct CSV URL (no API needed)
     GOOGLE_SHEETS: {
-        SHEET_ID: '1lMES8jWfpUPoJNVL1O3QqzdpCSQMtfAbDq-r-xsNTJc',
         CSV_URL: 'https://docs.google.com/spreadsheets/d/1lMES8jWfpUPoJNVL1O3QqzdpCSQMtfAbDq-r-xsNTJc/export?format=csv&gid=0'
     },
     
-    // GitHub Repository - Create this repo first!
+    // GitHub Repository - RAW URLs ONLY
     GITHUB_REPO: {
         USERNAME: 'nishamehndidesigner',
         REPO_NAME: 'gallery',
         BRANCH: 'main',
-        BASE_URL: 'https://raw.githubusercontent.com/nishamehndidesigner/gallery/main/',
+        RAW_BASE_URL: 'https://raw.githubusercontent.com/nishamehndidesigner/gallery/main/',
         API_BASE_URL: 'https://api.github.com/repos/nishamehndidesigner/gallery/contents'
     },
     
