@@ -38,7 +38,7 @@ async function fetchWithRetry(url, options = {}, maxRetries = 3) {
 
 // Enhanced GitHub image fetcher
 async function fetchGitHubImagesEnhanced() {
-    const { USERNAME, REPO_NAME, RAW_BASE_URL } = CONFIG.GITHUB_REPO;
+    const { USERNAME, REPO_NAME, BASE_URL } = CONFIG.GITHUB_REPO;
     const apiUrl = `https://api.github.com/repos/${USERNAME}/${REPO_NAME}/contents`;
     
     try {
@@ -53,7 +53,7 @@ async function fetchGitHubImagesEnhanced() {
                 if (category && images[category]) {
                     images[category].push({
                         name: file.name,
-                        url: RAW_BASE_URL + file.name,
+                        url: BASE_URL + file.name,
                         title: formatTitle(file.name),
                         size: file.size,
                         sha: file.sha

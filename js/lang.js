@@ -15,60 +15,47 @@ function updateLanguage() {
 // NETLIFY-COMPATIBLE PRICING SYSTEM
 async function loadPricingData() {
     try {
-        // Use JSONP to bypass CORS for Google Sheets
-        await loadGoogleSheetsViaJSONP();
+        await loadGoogleSheetsCSV();
     } catch (error) {
         console.error('Failed to load pricing from Google Sheets:', error);
     }
 }
 
-function loadGoogleSheetsViaJSONP() {
-    return new Promise((resolve, reject) => {
-        const script = document.createElement('script');
-        const callbackName = 'googleSheetsCallback' + Date.now();
-        
-        // Create global callback function
-        window[callbackName] = function(response) {
-            try {
-                const data = parseGoogleSheetsResponse(response);
+async function loadGoogleSheetsCSV() {
+    // Try Netlify proxy first, fallback to direct URL
+    const urls = [
+        `/api/sheets/${CONFIG.GOOGLE_SHEETS.SHEET_ID}/export?format=csv&gid=0`,
+        CONFIG.GOOGLE_SHEETS.CSV_URL
+    ];
+    
+    for (const url of urls) {
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                const csvText = await response.text();
+                const data = parseCSV(csvText);
                 updatePricingDisplay(data);
                 console.log('✅ Pricing loaded from Google Sheets');
-                resolve(data);
-            } catch (error) {
-                console.error('Error parsing Google Sheets data:', error);
-                reject(error);
-            } finally {
-                // Cleanup
-                document.head.removeChild(script);
-                delete window[callbackName];
+                return;
             }
-        };
-        
-        // Create JSONP URL with callback
-        const url = CONFIG.GOOGLE_SHEETS.JSONP_URL + '&tq=SELECT%20*&tqx=out:json;responseHandler:' + callbackName;
-        script.src = url;
-        script.onerror = () => {
-            document.head.removeChild(script);
-            delete window[callbackName];
-            reject(new Error('Failed to load Google Sheets'));
-        };
-        
-        document.head.appendChild(script);
-    });
+        } catch (error) {
+            console.log(`Failed to load from ${url}:`, error.message);
+        }
+    }
+    throw new Error('All Google Sheets URLs failed');
 }
 
-function parseGoogleSheetsResponse(response) {
-    const rows = response.table.rows;
+function parseCSV(csvText) {
+    const lines = csvText.trim().split('\n');
     const data = [];
     
-    // Skip header row, process data rows
-    for (let i = 1; i < rows.length; i++) {
-        const row = rows[i];
-        if (row.c && row.c[0] && row.c[1] && row.c[2]) {
+    for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+        if (values[0] && values[1] && values[2]) {
             data.push({
-                service: row.c[0].v,
-                minPrice: row.c[1].v,
-                maxPrice: row.c[2].v
+                service: values[0],
+                minPrice: values[1],
+                maxPrice: values[2]
             });
         }
     }
@@ -107,37 +94,48 @@ async function loadGalleryImages() {
 }
 
 async function fetchGitHubImages() {
-    const { API_BASE_URL, RAW_BASE_URL } = CONFIG.GITHUB_REPO;
+    const { API_BASE_URL, BASE_URL } = CONFIG.GITHUB_REPO;
     
-    const response = await fetch(API_BASE_URL, {
-        method: 'GET',
-        headers: {
-            'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'Nisha-Mehndi-Website'
-        }
-    });
+    // Try Netlify proxy first, fallback to direct API
+    const urls = [
+        `/api/github/repos/${CONFIG.GITHUB_REPO.USERNAME}/${CONFIG.GITHUB_REPO.REPO_NAME}/contents`,
+        API_BASE_URL
+    ];
     
-    if (!response.ok) {
-        throw new Error(`GitHub API failed: ${response.status} ${response.statusText}`);
-    }
-    
-    const files = await response.json();
-    const images = { bridal: [], party: [], arabic: [], simple: [] };
-    
-    files.forEach(file => {
-        if (file.type === 'file' && isImageFile(file.name)) {
-            const category = getCategoryFromFileName(file.name);
-            if (category && images[category]) {
-                images[category].push({
-                    name: file.name,
-                    url: RAW_BASE_URL + file.name,
-                    title: formatTitle(file.name)
+    for (const url of urls) {
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/vnd.github.v3+json',
+                    'User-Agent': 'Nisha-Mehndi-Website'
+                }
+            });
+            
+            if (response.ok) {
+                const files = await response.json();
+                const images = { bridal: [], party: [], arabic: [], simple: [] };
+                
+                files.forEach(file => {
+                    if (file.type === 'file' && isImageFile(file.name)) {
+                        const category = getCategoryFromFileName(file.name);
+                        if (category && images[category]) {
+                            images[category].push({
+                                name: file.name,
+                                url: BASE_URL + file.name,
+                                title: formatTitle(file.name)
+                            });
+                        }
+                    }
                 });
+                
+                return images;
             }
+        } catch (error) {
+            console.log(`Failed to load from ${url}:`, error.message);
         }
-    });
-    
-    return images;
+    }
+    throw new Error('All GitHub URLs failed');
 }
 
 function displayImages(imageData) {
@@ -222,18 +220,23 @@ function showGitHubError() {
     const galleryGrid = document.querySelector('.gallery-grid');
     galleryGrid.innerHTML = `
         <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: var(--white); border-radius: 20px; box-shadow: var(--shadow-md);">
-            <h3 style="color: var(--primary); margin-bottom: 1rem;">⚠️ GitHub Repository Issue</h3>
+            <h3 style="color: var(--primary); margin-bottom: 1rem;">📸 Gallery Setup Required</h3>
             <p style="color: var(--text-light); margin-bottom: 2rem;">
-                Unable to load images from GitHub. Please ensure:
+                GitHub repository needs to be created first.
             </p>
-            <div style="background: var(--cream); padding: 2rem; border-radius: 15px; margin: 2rem 0;">
-                <ul style="text-align: left; color: var(--text-light);">
-                    <li>Repository is PUBLIC</li>
-                    <li>Images are named: bridal_1.jpg, party_1.jpg, etc.</li>
-                    <li>Repository: github.com/${CONFIG.GITHUB_REPO.USERNAME}/${CONFIG.GITHUB_REPO.REPO_NAME}</li>
-                </ul>
+            <div style="background: var(--cream); padding: 2rem; border-radius: 15px; margin: 2rem 0; text-align: left;">
+                <h4 style="color: var(--primary); margin-bottom: 1rem;">Setup Steps:</h4>
+                <ol style="color: var(--text-light); line-height: 1.8;">
+                    <li>Create repository: <strong>github.com/${CONFIG.GITHUB_REPO.USERNAME}/${CONFIG.GITHUB_REPO.REPO_NAME}</strong></li>
+                    <li>Make it <strong>PUBLIC</strong></li>
+                    <li>Upload images: bridal_1.jpg, party_1.jpg, arabic_1.jpg, simple_1.jpg</li>
+                    <li>Redeploy website</li>
+                </ol>
             </div>
-            <a href="contact.html" class="btn">Contact Us Instead</a>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="https://github.com/new" target="_blank" class="btn">Create Repository</a>
+                <a href="contact.html" class="btn btn-secondary">Contact Us</a>
+            </div>
         </div>
     `;
 }
