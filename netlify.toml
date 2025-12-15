@@ -1,23 +1,30 @@
 [build]
   publish = "."
 
-[[redirects]]
-  from = "/api/sheets/*"
-  to = "https://docs.google.com/spreadsheets/d/:splat"
-  status = 200
-  force = true
-  headers = {Access-Control-Allow-Origin = "*"}
-
+# Netlify redirects for external API access
 [[redirects]]
   from = "/api/github/*"
   to = "https://api.github.com/:splat"
   status = 200
   force = true
-  headers = {Access-Control-Allow-Origin = "*"}
+  headers = {Access-Control-Allow-Origin = "*", Access-Control-Allow-Methods = "GET, OPTIONS", Access-Control-Allow-Headers = "Accept, User-Agent"}
 
+# Headers for CORS and security
 [[headers]]
   for = "/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"
-    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
-    Access-Control-Allow-Headers = "Content-Type"
+    Access-Control-Allow-Methods = "GET, OPTIONS"
+    Access-Control-Allow-Headers = "Accept, Content-Type, User-Agent"
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Specific headers for API calls
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, OPTIONS"
+    Access-Control-Allow-Headers = "Accept, User-Agent"
+    Cache-Control = "public, max-age=300"

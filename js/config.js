@@ -1,17 +1,22 @@
-// Website Configuration - NETLIFY PROXY URLS
+// Website Configuration - NETLIFY OPTIMIZED
 
 const CONFIG = {
-    // Use Netlify proxy URLs to avoid CORS
+    // Google Sheets - Use JSONP compatible URL
     GOOGLE_SHEETS: {
-        PRICING_CSV_URL: '/api/sheets/1lMES8jWfpUPoJNVL1O3QqzdpCSQMtfAbDq-r-xsNTJc/export?format=csv&gid=0'
+        SHEET_ID: '1lMES8jWfpUPoJNVL1O3QqzdpCSQMtfAbDq-r-xsNTJc',
+        // Use published web URL for CORS-free access
+        JSONP_URL: 'https://docs.google.com/spreadsheets/d/1lMES8jWfpUPoJNVL1O3QqzdpCSQMtfAbDq-r-xsNTJc/gviz/tq?tqx=out:json&sheet=Sheet1'
     },
     
-    // GitHub Repository
+    // GitHub Repository - Use direct raw URLs
     GITHUB_REPO: {
         USERNAME: 'nishamehndidesigner',
         REPO_NAME: 'gallery',
         BRANCH: 'main',
-        API_URL: '/api/github/repos/nishamehndidesigner/gallery/contents'
+        // Use raw.githubusercontent.com for direct image access
+        RAW_BASE_URL: 'https://raw.githubusercontent.com/nishamehndidesigner/gallery/main/',
+        // Use GitHub API with proper headers
+        API_BASE_URL: 'https://api.github.com/repos/nishamehndidesigner/gallery/contents'
     },
     
     // Contact Information
