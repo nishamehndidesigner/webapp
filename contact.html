@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Appointment | Nisha Mehndi Designer</title>
+    <meta name="description" content="Book your mehndi appointment instantly. Easy booking process with professional service.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <script src="js/config.js"></script>
+    <script defer src="js/lang.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <h1>✨ Nisha Mehndi Designer</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="pricing.html">Pricing</a>
+            <a href="contact.html">Book Now</a>
+            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
+        </nav>
+    </nav>
+
+    <!-- Contact Section -->
+    <section class="section" style="margin-top: 80px;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Book Your Appointment</h2>
+                <p class="section-subtitle">Fill out the form below and we'll contact you instantly via WhatsApp to confirm your booking</p>
+            </div>
+
+            <div class="form-container">
+                <form onsubmit="sendWhatsApp(event)" class="form-grid">
+                    <div class="form-grid form-grid-2">
+                        <input type="text" id="name" placeholder="Your Full Name *" required>
+                        <input type="tel" id="phone" placeholder="Phone Number *" required>
+                    </div>
+                    
+                    <input type="email" id="email" placeholder="Email Address (Optional)">
+                    
+                    <select id="service" required>
+                        <option value="">Select Mehndi Service *</option>
+                        <option value="Simple Mehndi">Simple Mehndi (₹300-500)</option>
+                        <option value="Party Mehndi">Party Mehndi (₹800-1200)</option>
+                        <option value="Arabic Mehndi">Arabic Mehndi (₹600-1000)</option>
+                        <option value="Bridal Mehndi">Bridal Mehndi (₹2000-5000)</option>
+                        <option value="Kids Mehndi">Kids Mehndi (₹200-400)</option>
+                        <option value="Group Booking">Group Booking (5+ people)</option>
+                    </select>
+
+                    <div class="form-grid form-grid-2">
+                        <input type="date" id="date" required>
+                        <select id="time" required>
+                            <option value="">Preferred Time *</option>
+                            <option value="Morning (9 AM - 12 PM)">Morning (9 AM - 12 PM)</option>
+                            <option value="Afternoon (12 PM - 4 PM)">Afternoon (12 PM - 4 PM)</option>
+                            <option value="Evening (4 PM - 8 PM)">Evening (4 PM - 8 PM)</option>
+                        </select>
+                    </div>
+
+                    <input type="text" id="location" placeholder="Your Location/Address *" required>
+                    
+                    <select id="hands">
+                        <option value="Both Hands">Both Hands</option>
+                        <option value="Right Hand Only">Right Hand Only</option>
+                        <option value="Left Hand Only">Left Hand Only</option>
+                        <option value="Hands + Feet">Hands + Feet (Bridal)</option>
+                    </select>
+
+                    <textarea id="message" rows="4" placeholder="Special requests or design preferences..."></textarea>
+
+                    <button type="submit" class="btn" style="width: 100%; justify-content: center; font-size: 1.2rem; padding: var(--spacing-sm) var(--spacing-lg);">
+                        📱 Send Booking Request via WhatsApp
+                    </button>
+                </form>
+            </div>
+
+            <!-- Contact Methods -->
+            <div class="grid grid-3" style="margin-top: var(--spacing-xl);">
+                <div class="card" style="text-align: center;">
+                    <span class="card-icon">📱</span>
+                    <h3>WhatsApp Booking</h3>
+                    <p>Quick and easy booking via WhatsApp with instant confirmation and communication.</p>
+                    <a href="https://wa.me/918489305238?text=Hi! I would like to book a mehndi appointment." class="btn" style="background: #25D366; color: white; margin-top: var(--spacing-sm);">
+                        Chat on WhatsApp
+                    </a>
+                </div>
+
+                <div class="card" style="text-align: center;">
+                    <span class="card-icon">📞</span>
+                    <h3>Call Us</h3>
+                    <p>Speak directly with Nisha for personalized consultation and immediate booking assistance.</p>
+                    <a href="tel:+918489305238" class="btn" style="margin-top: var(--spacing-sm);">
+                        Call: +91 84893 05238
+                    </a>
+                </div>
+
+                <div class="card" style="text-align: center;">
+                    <span class="card-icon">🏠</span>
+                    <h3>Home Service</h3>
+                    <p>We come to your location for your convenience. Professional service across the city.</p>
+                    <div style="color: var(--primary); font-weight: 700; font-size: 1.3rem; margin-top: var(--spacing-sm); background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                        Free within 10km
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guidelines -->
+            <div style="margin-top: var(--spacing-xl); padding: var(--spacing-lg); background: linear-gradient(135deg, var(--cream) 0%, var(--white) 100%); border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md);">
+                <h4 style="color: var(--primary); margin-bottom: var(--spacing-md); font-size: 1.3rem; font-family: 'Playfair Display', serif;">📋 Booking Guidelines</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: var(--spacing-md); color: var(--text-light); font-size: 1rem; line-height: 1.6;">
+                    <div>• Book at least 24 hours in advance</div>
+                    <div>• Bridal mehndi requires 3-7 days advance</div>
+                    <div>• 50% advance payment for bridal bookings</div>
+                    <div>• Free home service within 10km radius</div>
+                    <div>• Group discounts available for 5+ people</div>
+                    <div>• All materials and henna included</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Nisha Mehndi Designer. Made with ❤️ for beautiful mehndi art</p>
+    </footer>
+
+    <!-- WhatsApp Float -->
+    <a class="whatsapp-float" href="https://wa.me/918489305238?text=Hi! I would like to book a mehndi appointment." title="WhatsApp">
+        💬
+    </a>
+
+    <script>
+        // Set minimum date to today
+        document.getElementById('date').min = new Date().toISOString().split('T')[0];
+
+        function sendWhatsApp(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const service = document.getElementById('service').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const location = document.getElementById('location').value;
+            const hands = document.getElementById('hands').value;
+            const message = document.getElementById('message').value;
+
+            if (!name || !phone || !service || !date || !time || !location) {
+                alert('Please fill in all required fields marked with *');
+                return;
+            }
+
+            const whatsappMessage = `🎨 *MEHNDI BOOKING REQUEST*
+
+👤 *Name:* ${name}
+📱 *Phone:* ${phone}
+${email ? `📧 *Email:* ${email}` : ''}
+
+🎯 *Service:* ${service}
+📅 *Date:* ${date}
+⏰ *Time:* ${time}
+📍 *Location:* ${location}
+✋ *Coverage:* ${hands}
+
+${message ? `💬 *Special Requests:* ${message}` : ''}
+
+Please confirm my booking. Thank you! 🙏`;
+
+            const encodedMessage = encodeURIComponent(whatsappMessage);
+            window.open(`https://wa.me/918489305238?text=${encodedMessage}`, '_blank');
+            
+            // Show success message
+            alert('✅ Booking request sent! We\'ll contact you shortly via WhatsApp.');
+        }
+    </script>
+</body>
+</html>

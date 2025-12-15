@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | Nisha Mehndi Designer</title>
+    <meta name="description" content="Browse our beautiful collection of mehndi designs - bridal, party, Arabic, and simple patterns.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <script src="js/config.js"></script>
+    <script defer src="js/lang.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <h1>✨ Nisha Mehndi Designer</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="pricing.html">Pricing</a>
+            <a href="contact.html">Book Now</a>
+            <button class="lang-btn" onclick="toggleLang()">🌐 Lang</button>
+        </nav>
+    </nav>
+
+    <!-- Gallery Section -->
+    <section class="section" style="margin-top: 80px;">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Beautiful Designs</h2>
+                <p class="section-subtitle">Explore our stunning collection of mehndi artistry crafted with love and precision</p>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="filter-buttons">
+                <button class="filter-btn active" onclick="filterGallery('all')">All Designs</button>
+                <button class="filter-btn" onclick="filterGallery('bridal')">Bridal</button>
+                <button class="filter-btn" onclick="filterGallery('party')">Party</button>
+                <button class="filter-btn" onclick="filterGallery('arabic')">Arabic</button>
+                <button class="filter-btn" onclick="filterGallery('simple')">Simple</button>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="gallery-grid">
+                <!-- Images will be loaded dynamically from GitHub -->
+            </div>
+
+            <!-- CTA Section -->
+            <div style="text-align: center; margin-top: var(--spacing-xl); padding: var(--spacing-xl); background: linear-gradient(135deg, var(--cream) 0%, var(--white) 100%); border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md);">
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: var(--spacing-sm); color: var(--text);">Love What You See?</h3>
+                <p style="color: var(--text-light); margin-bottom: var(--spacing-lg); font-size: 1.2rem; max-width: 600px; margin-left: auto; margin-right: auto;">Book your appointment and let us create beautiful mehndi art for your special occasion!</p>
+                <a href="contact.html" class="btn" style="font-size: 1.2rem; padding: var(--spacing-sm) var(--spacing-xl);">
+                    ✨ Book Your Design Now
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Nisha Mehndi Designer. Made with ❤️ for beautiful mehndi art</p>
+    </footer>
+
+    <!-- WhatsApp Float -->
+    <a class="whatsapp-float" href="https://wa.me/918489305238?text=Hi! I saw your gallery and would like to book a mehndi appointment." title="WhatsApp">
+        💬
+    </a>
+
+    <script>
+        function filterGallery(category) {
+            const items = document.querySelectorAll('.gallery-item');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Update active button
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter items
+            items.forEach(item => {
+                if (category === 'all' || item.classList.contains(category)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
