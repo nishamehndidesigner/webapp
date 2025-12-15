@@ -1,17 +1,17 @@
-// Website Configuration - AUTO-SCAN GITHUB REPO
+// Website Configuration - NETLIFY PROXY URLS
 
 const CONFIG = {
-    // Google Sheets Configuration (FREE)
+    // Use Netlify proxy URLs to avoid CORS
     GOOGLE_SHEETS: {
-        // Pricing Sheet only
-        PRICING_CSV_URL: 'https://docs.google.com/spreadsheets/d/1lMES8jWfpUPoJNVL1O3QqzdpCSQMtfAbDq-r-xsNTJc/export?format=csv&gid=0'
+        PRICING_CSV_URL: '/api/sheets/1lMES8jWfpUPoJNVL1O3QqzdpCSQMtfAbDq-r-xsNTJc/export?format=csv&gid=0'
     },
     
-    // GitHub Repository for Images (AUTO-SCAN)
+    // GitHub Repository
     GITHUB_REPO: {
         USERNAME: 'nishamehndidesigner',
         REPO_NAME: 'gallery',
-        BRANCH: 'main'
+        BRANCH: 'main',
+        API_URL: '/api/github/repos/nishamehndidesigner/gallery/contents'
     },
     
     // Contact Information
